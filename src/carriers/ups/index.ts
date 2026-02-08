@@ -1,5 +1,6 @@
 export { mapRateRequestToUpsPayload } from "./map-rate-request.js";
 export { parseUpsRateResponse } from "./parse-rate-response.js";
+export { UpsCarrier, type UpsCarrierOptions } from "./ups-carrier.js";
 export type {
   RatedShipment,
   UpsRateResponseWrapper,
