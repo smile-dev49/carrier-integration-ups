@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-/**
- * Zod schemas for UPS Rating API response. Lenient on optional/malformed
- * fields so we can validate external data and normalize safely.
- * @see https://developer.ups.com/api/reference?loc=en_US&tag=Rating
- */
-
 const totalChargesSchema = z.object({
   CurrencyCode: z.string().optional(),
   MonetaryValue: z.union([z.string(), z.number()]).optional(),
@@ -16,11 +10,9 @@ const serviceSchema = z.object({
   Description: z.string().optional(),
 });
 
-/** Single rated shipment (one service option). */
 export const ratedShipmentSchema = z.object({
   Service: serviceSchema.optional(),
   TotalCharges: totalChargesSchema.optional(),
-  /** Optional transit time; structure varies (e.g. BusinessDaysInTransit). */
   TimeInTransit: z
     .object({
       BusinessDaysInTransit: z.string().optional(),
@@ -38,7 +30,6 @@ const rateResponseSchema = z.object({
   ]).optional(),
 });
 
-/** Top-level wrapper: API returns { RateResponse: { ... } }. */
 export const upsRateResponseWrapperSchema = z.object({
   RateResponse: rateResponseSchema.optional(),
 });

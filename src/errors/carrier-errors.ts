@@ -1,6 +1,3 @@
-/**
- * Base error for carrier integration failures. Subclasses carry specific context.
- */
 export class CarrierIntegrationError extends Error {
   constructor(
     message: string,
@@ -13,9 +10,6 @@ export class CarrierIntegrationError extends Error {
   }
 }
 
-/**
- * Thrown when carrier authentication fails (e.g. invalid or expired credentials).
- */
 export class AuthenticationError extends CarrierIntegrationError {
   constructor(
     message: string = "Carrier authentication failed",
@@ -28,9 +22,6 @@ export class AuthenticationError extends CarrierIntegrationError {
   }
 }
 
-/**
- * Thrown when the carrier returns rate limiting (e.g. HTTP 429 or equivalent).
- */
 export class RateLimitError extends CarrierIntegrationError {
   constructor(
     message: string = "Carrier rate limit exceeded",
@@ -44,9 +35,6 @@ export class RateLimitError extends CarrierIntegrationError {
   }
 }
 
-/**
- * Thrown on network failures (timeout, connection refused, DNS, etc.).
- */
 export class NetworkError extends CarrierIntegrationError {
   constructor(
     message: string = "Network error during carrier request",
@@ -59,9 +47,6 @@ export class NetworkError extends CarrierIntegrationError {
   }
 }
 
-/**
- * Thrown when the carrier response is invalid (malformed JSON, missing fields, wrong shape).
- */
 export class InvalidResponseError extends CarrierIntegrationError {
   constructor(
     message: string = "Invalid response from carrier",

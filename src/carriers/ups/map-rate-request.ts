@@ -13,14 +13,8 @@ const PACKAGING_TYPE_CODE = "02";
 const PACKAGING_TYPE_DESC = "Customer Supplied Package";
 const PAYMENT_TYPE_BILL_SHIPPER = "01";
 
-/**
- * Maps carrier-agnostic RateRequest to UPS Rating API request payload.
- * UPS-specific structure only; no logic outside this module.
- */
-
 function mapAddressToUps(
   address: Address,
-  /** Assumption: Name is required by UPS; we use city when no explicit name in domain. */
   name: string
 ): UpsAddressWithName {
   const addressLines = [address.line1];
@@ -35,11 +29,6 @@ function mapAddressToUps(
   };
 }
 
-/**
- * Assumption: UPS expects weight and dimensions as strings. We round dimensions
- * to integers and weight to 2 decimals for the string representation.
- * TODO: Validate if precision loss from rounding dimensions is acceptable for all carriers
- */
 function mapPackageToUps(pkg: Package): UpsPackage {
   const weightCode = pkg.weightUnit === "lb" ? WEIGHT_CODE_LB : WEIGHT_CODE_KG;
   const dimCode = pkg.dimensionUnit === "in" ? DIM_CODE_IN : DIM_CODE_CM;
@@ -58,14 +47,6 @@ function mapPackageToUps(pkg: Package): UpsPackage {
   };
 }
 
-/**
- * Converts domain RateRequest to UPS Rating API body.
- *
- * Assumptions:
- * - Shipper and ShipFrom both use origin address (typical when seller ships from own location).
- * - PaymentDetails uses BillShipper with empty account for published rates; no negotiated rates.
- * - Service is omitted so caller can use requestoption=Shop for all services, or set a default service later.
- */
 export function mapRateRequestToUpsPayload(
   request: RateRequest
 ): UpsRateRequestWrapper {

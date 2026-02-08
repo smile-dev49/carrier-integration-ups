@@ -1,9 +1,3 @@
-/**
- * UPS Rating API request payload types.
- * Structure follows UPS API documentation: RateRequest wrapper with Shipment, ShipFrom, ShipTo, Package.
- * @see https://developer.ups.com/api/reference?loc=en_US&tag=Rating
- */
-
 export interface UpsAddress {
   AddressLine: string[];
   City: string;
@@ -54,7 +48,6 @@ export interface UpsRateRequest {
   Shipment: UpsShipment;
 }
 
-/** Top-level wrapper for POST body (per UPS API). */
 export interface UpsRateRequestWrapper {
   RateRequest: UpsRateRequest;
 }

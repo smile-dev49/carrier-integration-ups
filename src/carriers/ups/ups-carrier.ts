@@ -13,23 +13,15 @@ import { parseUpsRateResponse } from "./parse-rate-response.js";
 
 const CARRIER_ID = "ups";
 
-/** Default Rating API URL (Shop = all services). Override with UPS_RATING_URL. */
 const DEFAULT_RATING_URL =
   "https://onlinetools.ups.com/api/rating/v2409/Shop";
 
 export interface UpsCarrierOptions {
-  /** HTTP client for Rating API calls. */
   httpClient: HttpClient;
-  /** Token manager; auth is applied transparently on each request. */
   tokenManager: UpsTokenManager;
-  /** Rating API endpoint (POST). Default from env UPS_RATING_URL or DEFAULT_RATING_URL. */
   ratingUrl?: string;
 }
 
-/**
- * UPS carrier implementation. Uses OAuth token manager for auth;
- * callers use getRates() without any auth parameters.
- */
 export class UpsCarrier implements Carrier {
   readonly id = CARRIER_ID;
 

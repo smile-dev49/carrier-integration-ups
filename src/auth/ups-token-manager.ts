@@ -42,10 +42,6 @@ function getEnv(name: string): string {
   return value;
 }
 
-/**
- * UPS OAuth 2.0 client-credentials token manager. Caches token in memory,
- * tracks expiry, and refreshes automatically when expired. Config from env.
- */
 export class UpsTokenManager {
   private cache: TokenCache | null = null;
   private readonly clientId: string;
@@ -64,9 +60,6 @@ export class UpsTokenManager {
     this.authUrl = config?.authUrl ?? (process.env["UPS_AUTH_URL"] ?? DEFAULT_UPS_AUTH_URL);
   }
 
-  /**
-   * Returns a valid access token, from cache or by refreshing.
-   */
   async getToken(): Promise<string> {
     if (this.isTokenValid()) {
       return this.cache!.accessToken;
@@ -76,7 +69,6 @@ export class UpsTokenManager {
 
   private isTokenValid(): boolean {
     if (this.cache === null) return false;
-    // TODO: Make buffer configurable; 60s is safe but may be too conservative for high-volume usage
     const bufferSeconds = 60;
     return Date.now() < this.cache.expiresAt - bufferSeconds * 1000;
   }

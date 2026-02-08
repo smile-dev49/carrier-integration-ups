@@ -6,10 +6,6 @@ type ResponseOrThrow<T = unknown> =
   | (() => Promise<HttpResponse<T>>)
   | (() => Promise<never>);
 
-/**
- * Stub HTTP client for integration tests. Records all POST calls and returns
- * configured responses per URL (auth vs rating). No real HTTP.
- */
 export class StubHttpClient implements HttpClient {
   readonly authCalls: { url: string; body: unknown; headers?: Record<string, string> }[] = [];
   readonly ratingCalls: { url: string; body: unknown; headers?: Record<string, string> }[] = [];
@@ -19,25 +15,21 @@ export class StubHttpClient implements HttpClient {
   private authUrlPattern: string | RegExp = "oauth";
   private ratingUrlPattern: string | RegExp = "rating";
 
-  /** Match URL for auth (default: URL includes "oauth"). */
   setAuthUrlPattern(pattern: string | RegExp): this {
     this.authUrlPattern = pattern;
     return this;
   }
 
-  /** Match URL for rating (default: URL includes "rating"). */
   setRatingUrlPattern(pattern: string | RegExp): this {
     this.ratingUrlPattern = pattern;
     return this;
   }
 
-  /** Queue response(s) for the next auth call(s). */
   stubAuthResponse(...responses: ResponseOrThrow[]): this {
     this.authResponses.push(...responses);
     return this;
   }
 
-  /** Queue response(s) for the next rating call(s). */
   stubRatingResponse(...responses: ResponseOrThrow<unknown>[]): this {
     this.ratingResponses.push(...responses);
     return this;

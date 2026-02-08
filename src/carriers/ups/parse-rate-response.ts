@@ -8,14 +8,8 @@ import {
 
 const CARRIER_ID = "ups";
 
-// TODO: Make default currency configurable per carrier instance (e.g. based on shipper location)
-/** Default currency when UPS omits it (assumption: USD for US-based usage). */
 const DEFAULT_CURRENCY = "USD";
 
-/**
- * Normalizes a single RatedShipment into a RateQuote, or returns null if
- * required fields are missing or invalid (safe handling of malformed data).
- */
 function normalizeRatedShipment(shipment: RatedShipment): RateQuote | null {
   const totalCharges = shipment?.TotalCharges;
   const monetaryValue = totalCharges?.MonetaryValue;
@@ -63,11 +57,6 @@ function normalizeRatedShipment(shipment: RatedShipment): RateQuote | null {
   return parsed.success ? parsed.data : null;
 }
 
-/**
- * Parses and validates UPS Rating API response into domain RateQuote array.
- * Invalid or malformed RatedShipment entries are skipped; empty or invalid
- * top-level structure throws InvalidResponseError.
- */
 export function parseUpsRateResponse(data: unknown): RateQuote[] {
   const parsed = upsRateResponseWrapperSchema.safeParse(data);
   if (!parsed.success) {
@@ -95,7 +84,6 @@ export function parseUpsRateResponse(data: unknown): RateQuote[] {
     if (quote !== null) {
       quotes.push(quote);
     }
-    // TODO: Log skipped invalid shipments for observability (e.g. missing price, bad format)
   }
 
   return quotes;

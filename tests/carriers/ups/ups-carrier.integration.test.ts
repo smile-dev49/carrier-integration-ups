@@ -14,7 +14,6 @@ import { rateRequestSchema } from "../../../src/domain/index.js";
 const AUTH_URL = "https://auth.test/oauth/token";
 const RATING_URL = "https://rating.test/api/rating/v2409/Shop";
 
-/** Realistic UPS OAuth token response. */
 function upsAuthResponse(expiresInSeconds = 3600) {
   return {
     status: 200,
@@ -26,7 +25,6 @@ function upsAuthResponse(expiresInSeconds = 3600) {
   };
 }
 
-/** Realistic UPS Rating API success response (multiple services). */
 function upsRatingResponse() {
   return {
     status: 200,
