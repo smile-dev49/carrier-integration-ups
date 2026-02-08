@@ -7,9 +7,16 @@ export interface HttpResponse<T = unknown> {
 }
 
 /**
+ * Optional request options for HTTP client.
+ */
+export interface RequestOptions {
+  headers?: Record<string, string>;
+}
+
+/**
  * Options to simulate failure modes (no real HTTP calls).
  */
-export interface MockRequestOptions {
+export interface MockRequestOptions extends RequestOptions {
   /** Simulate a timeout after a short delay. */
   simulateTimeout?: boolean;
   /** Simulate a response with this status (e.g. 404, 500). */
