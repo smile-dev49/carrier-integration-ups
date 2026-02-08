@@ -38,6 +38,7 @@ function mapAddressToUps(
 /**
  * Assumption: UPS expects weight and dimensions as strings. We round dimensions
  * to integers and weight to 2 decimals for the string representation.
+ * TODO: Validate if precision loss from rounding dimensions is acceptable for all carriers
  */
 function mapPackageToUps(pkg: Package): UpsPackage {
   const weightCode = pkg.weightUnit === "lb" ? WEIGHT_CODE_LB : WEIGHT_CODE_KG;

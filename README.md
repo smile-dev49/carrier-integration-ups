@@ -23,9 +23,8 @@ src/
 │   └── ups/         # UPS: mapper, parser, UpsCarrier
 ├── auth/             # Per-carrier auth (e.g. OAuth token manager)
 │   └── ups-token-manager.ts
-├── http/             # HTTP client abstraction + mock
+├── http/             # HTTP client abstraction
 │   ├── client.ts
-│   ├── mock-client.ts
 │   └── types.ts
 └── errors/           # Structured carrier errors (auth, rate limit, network, invalid response)
 
@@ -105,7 +104,7 @@ npx vitest
 
 ## What would be improved with more time
 
-- **Real HTTP client**: Swap the mock for a real client (e.g. `fetch` or `axios`) behind the same `HttpClient` interface, with timeouts and retries.
+- **Real HTTP client**: Implement a production HTTP client (e.g. using `fetch` or `axios`) behind the `HttpClient` interface, with configurable timeouts and retries.
 - **Retries and backoff**: Retry on 5xx and (with care) on rate limit (e.g. using `Retry-After`), with exponential backoff.
 - **Logging and observability**: Structured logs (request id, carrier, latency, errors) and metrics (success/error counts, latency percentiles).
 - **Configuration**: Load base URLs and timeouts from config/env per carrier instead of hardcoding.

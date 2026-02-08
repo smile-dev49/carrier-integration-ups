@@ -76,6 +76,7 @@ export class UpsTokenManager {
 
   private isTokenValid(): boolean {
     if (this.cache === null) return false;
+    // TODO: Make buffer configurable; 60s is safe but may be too conservative for high-volume usage
     const bufferSeconds = 60;
     return Date.now() < this.cache.expiresAt - bufferSeconds * 1000;
   }

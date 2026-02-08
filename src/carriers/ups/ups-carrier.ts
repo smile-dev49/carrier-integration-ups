@@ -42,7 +42,7 @@ export class UpsCarrier implements Carrier {
     this.tokenManager = options.tokenManager;
     this.ratingUrl =
       options.ratingUrl ??
-      (typeof process !== "undefined" && process.env["UPS_RATING_URL"]) ??
+      (typeof process !== "undefined" ? process.env["UPS_RATING_URL"] : undefined) ??
       DEFAULT_RATING_URL;
   }
 

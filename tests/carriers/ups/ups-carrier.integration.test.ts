@@ -93,7 +93,7 @@ describe("UpsCarrier integration", () => {
   });
 
   describe("request construction", () => {
-    it("sends RateRequest payload with origin as ShipFrom/Shipper and destination as ShipTo", async () => {
+    it("maps origin address to ShipFrom and Shipper, destination to ShipTo", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse(upsRatingResponse());
 
@@ -112,7 +112,7 @@ describe("UpsCarrier integration", () => {
       expect(shipper.PostalCode).toBe("21093");
     });
 
-    it("sends packages with correct weight and dimension units", async () => {
+    it("converts package weight and dimension units to UPS format", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse(upsRatingResponse());
 
@@ -127,7 +127,7 @@ describe("UpsCarrier integration", () => {
       expect((pkg.PackageWeight as Record<string, unknown>).Weight).toBe("2.50");
     });
 
-    it("includes Bearer token in rating request headers", async () => {
+    it("attaches Bearer token and Content-Type headers to rating request", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse(upsRatingResponse());
 
@@ -139,7 +139,7 @@ describe("UpsCarrier integration", () => {
   });
 
   describe("response normalization", () => {
-    it("returns normalized RateQuote array with serviceName, price, and optional estimatedDeliveryDays", async () => {
+    it("parses UPS response into RateQuote with service name, price, and delivery days", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse(upsRatingResponse());
 
@@ -182,7 +182,7 @@ describe("UpsCarrier integration", () => {
   });
 
   describe("OAuth token reuse and refresh", () => {
-    it("reuses cached token when calling getRates twice (auth called once)", async () => {
+    it("reuses cached token for multiple requests without re-authenticating", async () => {
       stub.stubAuthResponse(upsAuthResponse(3600));
       stub.stubRatingResponse(upsRatingResponse(), upsRatingResponse());
 
@@ -193,7 +193,7 @@ describe("UpsCarrier integration", () => {
       expect(stub.ratingCalls).toHaveLength(2);
     });
 
-    it("refreshes token when expired (auth called twice)", async () => {
+    it("automatically refreshes expired token before second request", async () => {
       stub.stubAuthResponse(upsAuthResponse(0), upsAuthResponse(3600));
       stub.stubRatingResponse(upsRatingResponse(), upsRatingResponse());
 
@@ -206,7 +206,7 @@ describe("UpsCarrier integration", () => {
   });
 
   describe("error handling", () => {
-    it("throws AuthenticationError on 401 rating response", async () => {
+    it("throws AuthenticationError when UPS rejects authorization (401)", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse({ status: 401, data: { message: "Unauthorized" } });
 
@@ -216,7 +216,7 @@ describe("UpsCarrier integration", () => {
       expect(stub.ratingCalls).toHaveLength(1);
     });
 
-    it("throws RateLimitError on 429 rating response", async () => {
+    it("throws RateLimitError when UPS rate limits the request (429)", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse({ status: 429, data: {} });
 
@@ -225,7 +225,7 @@ describe("UpsCarrier integration", () => {
       );
     });
 
-    it("throws NetworkError on 5xx rating response", async () => {
+    it("throws NetworkError when UPS returns server error (5xx)", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse({ status: 503, data: { error: "Service Unavailable" } });
 
@@ -234,7 +234,7 @@ describe("UpsCarrier integration", () => {
       );
     });
 
-    it("throws NetworkError on 4xx (non-401/429) rating response", async () => {
+    it("throws NetworkError when UPS returns client error other than 401/429 (4xx)", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse({ status: 400, data: { message: "Bad Request" } });
 
@@ -243,7 +243,7 @@ describe("UpsCarrier integration", () => {
       );
     });
 
-    it("throws NetworkError when rating request times out", async () => {
+    it("throws NetworkError when request times out", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse(() =>
         Promise.reject(new Error("Request timeout"))
@@ -254,7 +254,7 @@ describe("UpsCarrier integration", () => {
       );
     });
 
-    it("throws InvalidResponseError when rating response is malformed / invalid structure", async () => {
+    it("throws InvalidResponseError when response has invalid structure", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse({
         status: 200,
@@ -266,7 +266,7 @@ describe("UpsCarrier integration", () => {
       );
     });
 
-    it("throws NetworkError when rating request throws (e.g. timeout or malformed JSON from transport)", async () => {
+    it("throws NetworkError when transport layer fails with malformed JSON", async () => {
       stub.stubAuthResponse(upsAuthResponse());
       stub.stubRatingResponse(() =>
         Promise.reject(new SyntaxError("Unexpected token in JSON"))

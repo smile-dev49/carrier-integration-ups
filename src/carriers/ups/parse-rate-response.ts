@@ -8,6 +8,7 @@ import {
 
 const CARRIER_ID = "ups";
 
+// TODO: Make default currency configurable per carrier instance (e.g. based on shipper location)
 /** Default currency when UPS omits it (assumption: USD for US-based usage). */
 const DEFAULT_CURRENCY = "USD";
 
@@ -94,6 +95,7 @@ export function parseUpsRateResponse(data: unknown): RateQuote[] {
     if (quote !== null) {
       quotes.push(quote);
     }
+    // TODO: Log skipped invalid shipments for observability (e.g. missing price, bad format)
   }
 
   return quotes;
